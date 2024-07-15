@@ -1,0 +1,21 @@
+.modal-dialog > .modal-content {
+  font-family: var(--poppins);
+
+  > .modal-header {
+    > button {
+      cursor: url("../../public/assets/pointer.png"), default;
+    }
+  }
+
+  > .modal-body > form > .row > div {
+    > input {
+      border: 1px solid var(--light-grey);
+    }
+
+    > button {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      cursor: url("../../public/assets/pointer.png"), default;
+    }
+  }
+}

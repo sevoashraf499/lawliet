@@ -1,0 +1,77 @@
+.footer-section {
+  background-color: var(--primary-color);
+
+  > .section-6-container {
+    // height: 10rem;
+
+    > .row {
+      > .logo-col {
+        display: flex;
+        align-items: center;
+        user-select: none;
+
+        > h4 {
+          margin-left: 0.5rem;
+          color: white;
+          font-family: var(--poppins);
+          font-weight: 700;
+        }
+      }
+
+      > .details-col {
+        margin-block: 5rem;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+
+        > .product,
+        > .company,
+        > .support {
+          display: flex;
+          flex-flow: column nowrap;
+          font-family: var(--inter);
+
+          > h5 {
+            color: white;
+            font-weight: 500;
+            margin-bottom: 1rem;
+          }
+          > a {
+            text-decoration: none;
+            font-weight: 400;
+            color: var(--very-light-grey);
+            cursor: url("../../public/assets/pointer.png"), default;
+          }
+        }
+      }
+    }
+  }
+
+  > .copy-rights-div {
+    background-color: var(--light-blue);
+
+    > .container > .copy-rights-row {
+      padding-block: 1rem;
+
+      > div {
+        &:nth-child(1) {
+          color: var(--very-light-grey);
+        }
+        &:nth-child(2) {
+          width: fit-content;
+
+          > img {
+            user-select: none;
+            margin-inline: 0.5rem;
+            cursor: url("../../public/assets/pointer.png"), default;
+            transition: all 0.3s;
+
+            &:hover {
+              transform: scale(1.1);
+            }
+          }
+        }
+      }
+    }
+  }
+}

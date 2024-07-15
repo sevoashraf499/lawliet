@@ -1,0 +1,63 @@
+.section-2-container {
+  display: grid;
+  padding: 8rem;
+
+  > .row {
+    display: flex;
+    align-items: center;
+
+    > .question-col {
+      > h1 {
+        color: var(--dark-grey);
+        font-family: var(--playfair);
+        font-weight: 700;
+      }
+      > h5 {
+        color: var(--light-grey);
+        font-family: var(--poppins);
+        font-weight: 400;
+      }
+    }
+
+    > .cards-col {
+      display: grid;
+
+      > .row {
+        gap: 1rem;
+
+        > .card {
+          margin-inline: auto;
+          padding: 1rem;
+          border: none;
+          width: 17rem;
+          height: 17rem;
+          box-shadow: #193e6c40 0px 50px 100px -20px,
+            #094b724d 0px 30px 60px -30px;
+
+          > img {
+            width: 2.3rem;
+            user-select: none;
+          }
+          > h5 {
+            margin-block: 1rem;
+            color: var(--dark-grey);
+            font-family: var(--playfair);
+            font-weight: 700;
+          }
+          > span {
+            color: var(--light-grey);
+            font-family: var(--poppins);
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 992px) and (max-width: 1200px) {
+  .card {
+    width: calc(
+      50% - (0.5rem)
+    ) !important; // (gap-value / 2) = 1rem / 2 = 0.5rem
+  }
+}

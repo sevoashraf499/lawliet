@@ -1,0 +1,113 @@
+.section-4-container {
+  h1 {
+    padding-top: 4rem;
+    margin-bottom: 5rem;
+    color: var(--dark-grey);
+    font-family: var(--playfair);
+    font-weight: 700;
+    text-align: center;
+  }
+
+  // .slick-list {
+  //   display: flex;
+
+  //   .slick-track {
+  //     display: flex;
+  //     gap: 1rem; // Adjust the value as needed
+  //   }
+  // }
+
+  .slick-prev:before,
+  .slick-next:before {
+    color: var(--dark-grey);
+    font-size: 1.5rem;
+  }
+
+  .my-custom-nav-arrows-class,
+  .slick-dots li button::before {
+    cursor: url("../../public/assets/pointer.png"), default;
+  }
+
+  .testimonial-card {
+    min-width: 19rem;
+    width: 19rem;
+    padding: 1rem;
+    text-align: center;
+    border: none;
+
+    .text {
+      min-height: 15.5rem;
+      font-family: var(--poppins);
+      box-shadow: #193e6b33 0px 25px 50px 0px;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+
+      .title {
+        color: var(--very-dark-grey);
+        font-weight: 500;
+        margin-bottom: 1rem;
+      }
+
+      .description {
+        color: var(--grey);
+        font-weight: 400;
+      }
+
+      &::after {
+        content: "";
+        display: block;
+
+        width: 0;
+        height: 0;
+
+        border-top: 1rem solid white;
+        border-left: 0.5rem solid transparent;
+        border-right: 0.5rem solid transparent;
+
+        position: absolute;
+        bottom: -1rem;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+
+    .person {
+      width: fit-content;
+      margin-top: 1.5rem;
+      margin-inline: auto;
+      display: flex;
+      align-items: center;
+
+      img {
+        width: 3.5rem;
+        height: 3.5rem;
+      }
+
+      .person-info-box {
+        font-family: var(--inter);
+        text-align: start;
+        margin-left: 1rem;
+
+        .name {
+          color: var(--very-dark-grey);
+          font-weight: 700;
+        }
+
+        .position {
+          color: var(--grey);
+          font-weight: 400;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .my-custom-nav-arrows-class {
+    display: none !important;
+  }
+}

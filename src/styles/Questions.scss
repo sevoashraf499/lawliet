@@ -1,0 +1,58 @@
+.section-5-container {
+  margin-top: 8rem;
+  display: grid;
+
+  > .row {
+    > .text-col {
+      font-family: var(--poppins);
+
+      > h1 {
+        margin-bottom: 2rem;
+        font-family: var(--playfair);
+        font-weight: 700;
+        color: var(--dark-grey);
+      }
+
+      > h4 {
+        margin-bottom: 1.5rem;
+        color: var(--grey);
+        font-weight: 400;
+      }
+
+      button {
+        width: 12rem;
+        height: 3rem;
+        font-size: 1.4rem;
+        font-weight: 700;
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        transition: all 0.3s;
+        cursor: url("../../public/assets/pointer.png"), default;
+
+        &:hover {
+          transform: scale(1.03);
+        }
+
+        > i {
+          margin-right: 0.5rem;
+        }
+      }
+    }
+
+    > .img-col {
+      > img {
+        user-select: none;
+        border-bottom-left-radius: 3rem;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .section-5-container {
+    background-image: url("../../public/assets/Complex Questions.png");
+    background-size: cover;
+
+    padding: 3rem;
+  }
+}
