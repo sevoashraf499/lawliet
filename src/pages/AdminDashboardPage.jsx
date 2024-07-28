@@ -24,27 +24,25 @@ import {
   GridRowEditStopReasons,
 } from "@mui/x-data-grid";
 
-function EditToolbar(props) {
-  const { setRows, setRowModesModel } = props;
-
+const EditToolbar = ({ setRows, setRowModesModel }) => {
   const handleClick = () => {
     const id = `${Date.now()}-${Math.random()}`;
-    setRows((oldRows) => [
-      ...oldRows,
-      {
-        id,
-        createdAt: new Date(),
-        title: "",
-        description: "",
-        image: "",
-        name: "",
-        position: "",
-        isNew: true,
-      }, // Updated fields
-    ]);
+
+    const newTestimonial = {
+      id,
+      createdAt: new Date(),
+      title: "",
+      description: "",
+      image: "",
+      name: "",
+      position: "",
+      isNew: true,
+    };
+
+    setRows((oldRows) => [...oldRows, newTestimonial]);
     setRowModesModel((oldModel) => ({
       ...oldModel,
-      [id]: { mode: GridRowModes.Edit, fieldToFocus: "title" }, // Updated field to focus
+      [id]: { mode: GridRowModes.Edit, fieldToFocus: "title" },
     }));
   };
 
@@ -55,26 +53,24 @@ function EditToolbar(props) {
       </Button>
     </GridToolbarContainer>
   );
-}
+};
 
-function CustomToolbar(props) {
-  return (
-    <GridToolbarContainer
-      sx={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
-      <EditToolbar {...props} /> {/* Include EditToolbar */}
-      <Box sx={{ marginLeft: "auto" }}>
-        <GridToolbar {...props} /> {/* Include GridToolbar */}
-      </Box>
-    </GridToolbarContainer>
-  );
-}
+const CustomToolbar = (props) => (
+  <GridToolbarContainer
+    sx={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+    }}
+  >
+    <EditToolbar {...props} />
+    <Box sx={{ marginLeft: "auto" }}>
+      <GridToolbar {...props} />
+    </Box>
+  </GridToolbarContainer>
+);
 
-export default function AdminDashboardPage() {
+const AdminDashboardPage = () => {
   const navigate = useNavigate();
   const [rows, setRows] = useState([]);
   const [rowModesModel, setRowModesModel] = useState({});
@@ -87,7 +83,8 @@ export default function AdminDashboardPage() {
         "https://66a5336c5dc27a3c190aea7c.mockapi.io/api/testimonials"
       );
       const data = await response.json();
-      if (data !== "Not found") {
+
+      if (data && data !== "Not found") {
         const fetchedRows = data.map((item) => ({
           id: item.id,
           createdAt: new Date(item.createdAt),
@@ -105,22 +102,20 @@ export default function AdminDashboardPage() {
   }, []);
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" />; // Ensure Navigate is imported
+    return <Navigate to="/login" />;
   }
 
   const createTestimonial = async (newTestimonial) => {
-    const response = await fetch(
+    await fetch(
       "https://66a5336c5dc27a3c190aea7c.mockapi.io/api/testimonials",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newTestimonial),
+        body: JSON.stringify({ ...newTestimonial, isNew: false }),
       }
     );
-    const createdTestimonial = await response.json();
-    setRows((oldRows) => [...oldRows, createdTestimonial]);
   };
 
   const updateTestimonial = async (id, updatedTestimonial) => {
@@ -135,6 +130,7 @@ export default function AdminDashboardPage() {
       }
     );
     const updatedRow = await response.json();
+
     setRows((oldRows) =>
       oldRows.map((row) => (row.id === id ? updatedRow : row))
     );
@@ -161,13 +157,11 @@ export default function AdminDashboardPage() {
   };
 
   const handleSaveClick = (id) => () => {
-    const updatedRow = rows.find((row) => row.id === id);
-    updateTestimonial(id, updatedRow); // Call updateTestimonial
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
   };
 
   const handleDeleteClick = (id) => () => {
-    deleteTestimonial(id); // Call deleteTestimonial
+    deleteTestimonial(id);
   };
 
   const handleCancelClick = (id) => () => {
@@ -178,20 +172,26 @@ export default function AdminDashboardPage() {
 
     const editedRow = rows.find((row) => row.id === id);
     if (editedRow.isNew) {
-      setRows(rows.filter((row) => row.id !== id));
+      setRows((oldRows) => oldRows.filter((row) => row.id !== id));
     }
   };
 
-  const processRowUpdate = (newRow) => {
+  const processRowUpdate = async (newRow) => {
     const originalRow = rows.find((row) => row.id === newRow.id);
-    const updatedRow = {
-      ...newRow,
-      createdAt: originalRow.createdAt,
-      isNew: false,
-    }; // Retain original createdAt
-    createTestimonial(updatedRow); // Call createTestimonial for new rows
 
-    return updatedRow;
+    if (!originalRow.isNew) {
+      const updatedRow = {
+        ...newRow,
+        createdAt: new Date(originalRow.createdAt),
+        isNew: false,
+      };
+
+      await updateTestimonial(newRow.id, updatedRow);
+      return updatedRow;
+    } else {
+      await createTestimonial(newRow);
+      return newRow;
+    }
   };
 
   const handleRowModesModelChange = (newRowModesModel) => {
@@ -214,7 +214,8 @@ export default function AdminDashboardPage() {
       width: 180,
       align: "left",
       headerAlign: "left",
-      type: "dateTime",
+      //   type: "dateTime",
+      type: "string",
       editable: false,
       //   valueGetter: (params) => new Date(params.value), // Transform value to Date object
     },
@@ -246,7 +247,7 @@ export default function AdminDashboardPage() {
       editable: true,
       renderCell: (params) => (
         <Avatar src={params.value} alt="testimonial writer" />
-      ), // Custom rendering for the image
+      ),
     },
     {
       field: "name",
@@ -275,41 +276,37 @@ export default function AdminDashboardPage() {
       getActions: ({ id }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              icon={<SaveIcon />}
-              label="Save"
-              sx={{
-                color: "primary.main",
-              }}
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
-              icon={<CancelIcon />}
-              label="Cancel"
-              className="textPrimary"
-              onClick={handleCancelClick(id)}
-              color="inherit"
-            />,
-          ];
-        }
-
-        return [
-          <GridActionsCellItem
-            icon={<EditIcon />}
-            label="Edit"
-            className="textPrimary"
-            onClick={handleEditClick(id)}
-            color="inherit"
-          />,
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDeleteClick(id)}
-            color="inherit"
-          />,
-        ];
+        return isInEditMode
+          ? [
+              <GridActionsCellItem
+                icon={<SaveIcon />}
+                label="Save"
+                sx={{ color: "primary.main" }}
+                onClick={handleSaveClick(id)}
+              />,
+              <GridActionsCellItem
+                icon={<CancelIcon />}
+                label="Cancel"
+                className="textPrimary"
+                onClick={handleCancelClick(id)}
+                color="inherit"
+              />,
+            ]
+          : [
+              <GridActionsCellItem
+                icon={<EditIcon />}
+                label="Edit"
+                className="textPrimary"
+                onClick={handleEditClick(id)}
+                color="inherit"
+              />,
+              <GridActionsCellItem
+                icon={<DeleteIcon />}
+                label="Delete"
+                onClick={handleDeleteClick(id)}
+                color="inherit"
+              />,
+            ];
       },
     },
   ];
@@ -324,13 +321,13 @@ export default function AdminDashboardPage() {
           cursor: 'url("/assets/pointer.png"), default !important;', // Custom cursor for actions
         },
         "& .MuiDataGrid-columnHeaderTitleContainer": {
-          cursor: 'url("/assets/pointer.png"), default !important;', // Custom cursor for buttons
+          cursor: 'url("/assets/pointer.png"), default !important;',
         },
         "& .textPrimary": {
           color: "text.primary",
         },
         "& button": {
-          cursor: 'url("/assets/pointer.png"), default !important;', // Custom cursor for buttons
+          cursor: 'url("/assets/pointer.png"), default !important;',
         },
       }}
     >
@@ -349,12 +346,18 @@ export default function AdminDashboardPage() {
         rowModesModel={rowModesModel}
         onRowModesModelChange={handleRowModesModelChange}
         onRowEditStop={handleRowEditStop}
+        getRowId={(row) => row.id}
         processRowUpdate={processRowUpdate}
         slots={{
           toolbar: CustomToolbar,
         }}
         slotProps={{
-          toolbar: { setRows, setRowModesModel, showQuickFilter: true },
+          toolbar: {
+            setRows,
+            setRowModesModel,
+            showQuickFilter: true,
+            // createTestimonial,
+          },
         }}
       />
 
@@ -365,9 +368,9 @@ export default function AdminDashboardPage() {
           onClick={() => navigate("/")}
           sx={{
             "&:hover": {
-              backgroundColor: "primary.dark", // Change the background color on hover
-              transform: "scale(1.05)", // Slightly scale the button on hover
-              transition: "transform 0.5s", // Smooth transition for the scaling effect
+              backgroundColor: "primary.dark",
+              transform: "scale(1.05)",
+              transition: "transform 0.5s",
             },
           }}
         >
@@ -376,4 +379,6 @@ export default function AdminDashboardPage() {
       </Box>
     </Box>
   );
-}
+};
+
+export default AdminDashboardPage;
