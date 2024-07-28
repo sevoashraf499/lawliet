@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Container, Image } from "react-bootstrap";
 
 // react slick
@@ -7,9 +8,6 @@ import "slick-carousel/slick/slick-theme.css";
 
 // my styles
 import "./../styles/Testimonials.scss";
-
-// utils
-import { getTestimonials } from "./../utils/getTestimonials.js";
 
 const SampleNextArrow = (props) => {
   const { className, style, onClick } = props;
@@ -34,6 +32,24 @@ const SamplePrevArrow = (props) => {
 };
 
 const Testimonials = () => {
+  const [testimonials, setTestimonials] = useState([]);
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const response = await fetch(
+          "https://66a5336c5dc27a3c190aea7c.mockapi.io/api/testimonials"
+        );
+        const data = await response.json();
+        setTestimonials(data);
+      } catch (error) {
+        console.error("Error fetching testimonials:", error);
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
+
   const settings = {
     lazyLoad: true,
     dots: true,
@@ -75,7 +91,7 @@ const Testimonials = () => {
       <h1 className="display-5">Clients Testimonials</h1>
 
       <Slider {...settings}>
-        {getTestimonials()?.map((testimonial, index) => {
+        {testimonials?.map((testimonial, index) => {
           return (
             <div className="testimonial-card" key={index}>
               <div className="text">

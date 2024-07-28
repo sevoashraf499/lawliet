@@ -13,7 +13,7 @@ const Questions = () => {
             consultation if you're our first customer.
           </h4>
           <Button>
-            <i class="bi bi-telephone-fill"></i> Call now
+            <i className="bi bi-telephone-fill"></i> Call now
           </Button>
         </Col>
 

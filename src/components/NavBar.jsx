@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
 // components
 import Modal from "./Modal";
@@ -9,6 +10,8 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "./../styles/NavBar.scss";
 
 const NavBar = () => {
+  const navigate = useNavigate();
+
   const [isSearchModalOpened, setIsSearchModalOpened] = useState(false);
   const [isNavbarCollapsed, setIsNavbarCollapsed] = useState(true);
 
@@ -43,6 +46,15 @@ const NavBar = () => {
               </Nav.Link>
               <Nav.Link href="#contact" onClick={handleNavLinkClick}>
                 CONTACT
+              </Nav.Link>
+              <Nav.Link
+                href=""
+                onClick={() => {
+                  handleNavLinkClick();
+                  navigate("/login");
+                }}
+              >
+                DASHBOARD
               </Nav.Link>
               <Nav.Link
                 className="d-xs-block d-md-none"
