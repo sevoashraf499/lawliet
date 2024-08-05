@@ -35,16 +35,16 @@ const NavBar = () => {
 
           <Navbar.Collapse id="basic-navbar-nav" in={!isNavbarCollapsed}>
             <Nav className="ms-md-auto me-md-5 pe-md-5">
-              <Nav.Link href="#main" onClick={handleNavLinkClick}>
+              <Nav.Link href="/#main" onClick={handleNavLinkClick}>
                 HOME
               </Nav.Link>
-              <Nav.Link href="#about" onClick={handleNavLinkClick}>
+              <Nav.Link href="/#about" onClick={handleNavLinkClick}>
                 ABOUT
               </Nav.Link>
-              <Nav.Link href="#testimonials" onClick={handleNavLinkClick}>
+              <Nav.Link href="/#testimonials" onClick={handleNavLinkClick}>
                 TESTIMONIALS
               </Nav.Link>
-              <Nav.Link href="#contact" onClick={handleNavLinkClick}>
+              <Nav.Link href="/#contact" onClick={handleNavLinkClick}>
                 CONTACT
               </Nav.Link>
               <Nav.Link

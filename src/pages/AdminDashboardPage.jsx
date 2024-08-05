@@ -2,10 +2,16 @@ import { useState, useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
 // mui components
+import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 // mui icons
 import AddIcon from "@mui/icons-material/Add";
@@ -73,9 +79,15 @@ const CustomToolbar = (props) => (
 );
 
 const AdminDashboardPage = () => {
+  console.log("rendered");
   const navigate = useNavigate();
+
   const [rows, setRows] = useState([]);
   const [rowModesModel, setRowModesModel] = useState({});
+
+  const [isDeleteConfirmationPopupOpened, setIsDeleteConfirmationPopupOpened] =
+    useState(false);
+  const [selectedDeleteID, setSelectedDeleteID] = useState(null);
 
   const isAuthenticated = localStorage.getItem("isAuthenticated");
 
@@ -115,7 +127,7 @@ const AdminDashboardPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...newTestimonial, isNew: false }),
+        body: JSON.stringify(({ id, isNew, ...rest }) => rest(newTestimonial)),
       }
     );
   };
@@ -138,7 +150,21 @@ const AdminDashboardPage = () => {
     );
   };
 
-  const deleteTestimonial = async (id) => {
+  const handleRowEditStop = (params, event) => {
+    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+      event.defaultMuiPrevented = true;
+    }
+  };
+
+  const handleEditClick = (id) => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+  };
+
+  const handleSaveClick = (id) => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+  };
+
+  const handleDeleteClick = async (id) => {
     await fetch(
       `https://66a5336c5dc27a3c190aea7c.mockapi.io/api/testimonials/${id}`,
       {
@@ -148,25 +174,7 @@ const AdminDashboardPage = () => {
     setRows((oldRows) => oldRows.filter((row) => row.id !== id));
   };
 
-  const handleRowEditStop = (params, event) => {
-    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-      event.defaultMuiPrevented = true;
-    }
-  };
-
-  const handleEditClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-  };
-
-  const handleSaveClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-  };
-
-  const handleDeleteClick = (id) => () => {
-    deleteTestimonial(id);
-  };
-
-  const handleCancelClick = (id) => () => {
+  const handleCancelClick = (id) => {
     setRowModesModel({
       ...rowModesModel,
       [id]: { mode: GridRowModes.View, ignoreModifications: true },
@@ -184,8 +192,7 @@ const AdminDashboardPage = () => {
     if (!originalRow.isNew) {
       const updatedRow = {
         ...newRow,
-        createdAt: new Date(originalRow.createdAt),
-        isNew: false,
+        createdAt: new Date(),
       };
 
       await updateTestimonial(newRow.id, updatedRow);
@@ -284,13 +291,13 @@ const AdminDashboardPage = () => {
                 icon={<SaveIcon />}
                 label="Save"
                 sx={{ color: "primary.main" }}
-                onClick={handleSaveClick(id)}
+                onClick={() => handleSaveClick(id)}
               />,
               <GridActionsCellItem
                 icon={<CancelIcon />}
                 label="Cancel"
                 className="textPrimary"
-                onClick={handleCancelClick(id)}
+                onClick={() => handleCancelClick(id)}
                 color="inherit"
               />,
             ]
@@ -299,13 +306,16 @@ const AdminDashboardPage = () => {
                 icon={<EditIcon />}
                 label="Edit"
                 className="textPrimary"
-                onClick={handleEditClick(id)}
+                onClick={() => handleEditClick(id)}
                 color="inherit"
               />,
               <GridActionsCellItem
                 icon={<DeleteIcon />}
                 label="Delete"
-                onClick={handleDeleteClick(id)}
+                onClick={() => {
+                  setIsDeleteConfirmationPopupOpened(true);
+                  setSelectedDeleteID(id);
+                }}
                 color="inherit"
               />,
             ];
@@ -317,9 +327,11 @@ const AdminDashboardPage = () => {
     <>
       <NavBar />
 
-      <Box
+      <Container
+        maxWidth={false}
         sx={{
-          // height: "auto",
+          padding: 0,
+          height: "30rem",
           width: "100%",
           "& .actions": {
             color: "text.secondary",
@@ -361,7 +373,6 @@ const AdminDashboardPage = () => {
               setRows,
               setRowModesModel,
               showQuickFilter: true,
-              // createTestimonial,
             },
           }}
         />
@@ -382,7 +393,38 @@ const AdminDashboardPage = () => {
             Go to Home Page
           </Button>
         </Box>
-      </Box>
+      </Container>
+
+      <Dialog
+        open={isDeleteConfirmationPopupOpened}
+        onClose={handleCancelClick}
+      >
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this testimonial?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setIsDeleteConfirmationPopupOpened(false);
+            }}
+            color="primary"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              handleDeleteClick(selectedDeleteID);
+              setIsDeleteConfirmationPopupOpened(false);
+            }}
+            color="primary"
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
