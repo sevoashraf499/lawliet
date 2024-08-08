@@ -19,7 +19,7 @@ Lawliet Web App.
 
 ## Introduction
 
-Lawliet is an interactive website to show clients testimonials and do all the CRUD operations on them in the admin dashboard (username: admin, password: admin)
+Lawliet is an interactive website that shows clients' testimonials and does all the CRUD operations on them in the admin dashboard (username: admin, password: admin)
 
 ## Features
 
