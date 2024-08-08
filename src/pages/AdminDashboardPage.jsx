@@ -230,8 +230,8 @@ const AdminDashboardPage = () => {
       width: 180,
       align: "left",
       headerAlign: "left",
-      type: "dateTime",
-      // type: "string",
+      // type: "dateTime",
+      type: "string",
       editable: false,
     },
     {
