@@ -79,7 +79,6 @@ const CustomToolbar = (props) => (
 );
 
 const AdminDashboardPage = () => {
-  console.log("rendered");
   const navigate = useNavigate();
 
   const [rows, setRows] = useState([]);
@@ -91,27 +90,27 @@ const AdminDashboardPage = () => {
 
   const isAuthenticated = localStorage.getItem("isAuthenticated");
 
+  const fetchTestimonials = async () => {
+    const response = await fetch(
+      "https://66a5336c5dc27a3c190aea7c.mockapi.io/api/testimonials"
+    );
+    const data = await response.json();
+
+    if (data && data !== "Not found") {
+      const fetchedRows = data.map((item) => ({
+        id: item.id,
+        createdAt: new Date(item.createdAt),
+        title: item.title,
+        description: item.description,
+        image: item.image,
+        name: item.name,
+        position: item.position,
+      }));
+      setRows(fetchedRows);
+    }
+  };
+
   useEffect(() => {
-    const fetchTestimonials = async () => {
-      const response = await fetch(
-        "https://66a5336c5dc27a3c190aea7c.mockapi.io/api/testimonials"
-      );
-      const data = await response.json();
-
-      if (data && data !== "Not found") {
-        const fetchedRows = data.map((item) => ({
-          id: item.id,
-          createdAt: new Date(item.createdAt),
-          title: item.title,
-          description: item.description,
-          image: item.image,
-          name: item.name,
-          position: item.position,
-        }));
-        setRows(fetchedRows);
-      }
-    };
-
     fetchTestimonials();
   }, []);
 
@@ -120,6 +119,8 @@ const AdminDashboardPage = () => {
   }
 
   const createTestimonial = async (newTestimonial) => {
+    const { id, isNew, ...rest } = newTestimonial;
+
     await fetch(
       "https://66a5336c5dc27a3c190aea7c.mockapi.io/api/testimonials",
       {
@@ -127,9 +128,11 @@ const AdminDashboardPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(({ id, isNew, ...rest }) => rest(newTestimonial)),
+        body: JSON.stringify(rest),
       }
     );
+
+    fetchTestimonials();
   };
 
   const updateTestimonial = async (id, updatedTestimonial) => {
@@ -148,6 +151,8 @@ const AdminDashboardPage = () => {
     setRows((oldRows) =>
       oldRows.map((row) => (row.id === id ? updatedRow : row))
     );
+
+    fetchTestimonials();
   };
 
   const handleRowEditStop = (params, event) => {
@@ -172,6 +177,8 @@ const AdminDashboardPage = () => {
       }
     );
     setRows((oldRows) => oldRows.filter((row) => row.id !== id));
+
+    fetchTestimonials();
   };
 
   const handleCancelClick = (id) => {
@@ -223,10 +230,9 @@ const AdminDashboardPage = () => {
       width: 180,
       align: "left",
       headerAlign: "left",
-      //   type: "dateTime",
-      type: "string",
+      type: "dateTime",
+      // type: "string",
       editable: false,
-      //   valueGetter: (params) => new Date(params.value), // Transform value to Date object
     },
     {
       field: "title",
